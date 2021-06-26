@@ -36,17 +36,21 @@ function cleaningSchedule() {
 }
 
 
-function handleRequest(request) {
+addEventListener("fetch", (event) => {
+  event.respondWith(handleRequest(event.request));
+});
+
+async function handleRequest(request) {
   const { pathname } = new URL(request.url);
 
   if (pathname.startsWith("/style.css")) {
     const style = new URL("style.css", import.meta.url);
-    return fetch(style);
+    return staticContent("text/css", await fetch(style));
   }
 
   if (pathname.startsWith("/script.js")) {
     const script = new URL("script.js", import.meta.url);
-    return fetch(script);
+    return staticContent("application/javascript", await fetch(script));
   }
 
   return new Response(renderToString(<App />), {
@@ -54,6 +58,8 @@ function handleRequest(request) {
   });
 }
 
-addEventListener("fetch", (event) => {
-  event.respondWith(handleRequest(event.request));
-});
+const staticContent = (type, response) => {
+    const headers = new Headers(response.headers);
+    headers.set("content-type", `${type}; charset=utf-8`);
+    return new Response(response.body, { ...response, headers });
+}
