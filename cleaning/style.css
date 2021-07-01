@@ -1,6 +1,5 @@
 :root {
- font-size: 1.2em;
- font: small-caps bold 24px/1 sans-serif;
+ font: small-caps bold 1.2em/1 sans-serif;
 }
 
 label {
@@ -33,7 +32,7 @@ video {
 .cell {
   background: #ddffff;
   display: flex;
-  width: calc(48% - 1.6rem);
+  width: calc(50% - 1.6rem);
   margin: 0.3rem;
   padding: 0.5rem;
   font-size: 1rem;
