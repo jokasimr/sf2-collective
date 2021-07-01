@@ -1,10 +1,11 @@
 import { h, Fragment } from "https://x.lcas.dev/preact@10.5.12/mod.js";
 import { renderToString } from "https://x.lcas.dev/preact@10.5.12/ssr.js";
 
-import { getWeek } from "./utils.js";
+import { getWeek, randomCinderella } from "./utils.js";
 
 function App() {
-  return (
+  const cinderella = randomCinderella();
+  return `
     <html>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -12,29 +13,29 @@ function App() {
         <link rel="stylesheet" href="style.css" />
       </head>
       <body>
-        <marquee behavior="alternate"><p id="schedule">{cleaningSchedule()}</p></marquee>
-        <blockquote id="kanye-quote" class="blinking"></blockquote><small id="kanye-name"> - Kanye West</small>
-        <img src="https://www.animatedimages.org/data/media/481/animated-duck-image-0035.gif" />
-        <img src="https://www.animatedimages.org/data/media/481/animated-duck-image-0032.gif" />
+        <div id="app" style="display:none">
+          <p>
+            <span class="button" @click="left">⬅️</span>
+            <label for="week">Week</label>
+            <input type="number" v-model.number="week" value=${getWeek()} id="week" name="week" min="1" max="52" />
+            <span class="button" @click="right">➡️</span>
+          </p>
+          <transition-group id="schedule" name="schedule" tag="div">
+              <div class="cell" v-for="item in tasksAndPeople" :key="item">
+                <span>{{ item }}</span>
+              </div>
+          </transition-group>
+          <video preload="none" poster="${cinderella.png}" muted loop>
+            <source src="${cinderella.webm}">
+            <img src="${cinderella.png}" alt="cinderella cleaning">
+          </video>
+        </div>
       </body>
+      <script async src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
       <script async src="script.js"></script>
     </html>
-  );
+  `;
 }
-
-function cleaningSchedule() {
-  const tasks = ["Köket", "Hall", "Vardagsrum", "Tvättstuga", "Badrum", "Toalett/sopor"];
-  const people = ["Johannes", "Lorenzo", "Saranna", "Alex", "Sebastian", "Ellen"];
-  const weekOffset = (getWeek() - 1) % 6;
-  
-  function rotate(a) { a.push(a.shift()) };
-  for (let i = 0; i < weekOffset; i++)
-    rotate(tasks);
-    
-  return tasks
-    .map((task, i) => (<>{`${people[i]}: ${task}`} <br/></>))
-}
-
 
 addEventListener("fetch", (event) => {
   event.respondWith(handleRequest(event.request));
@@ -53,7 +54,7 @@ async function handleRequest(request) {
     return staticContent("application/javascript", await fetch(script));
   }
 
-  return new Response(renderToString(<App />), {
+  return new Response(App(), {
     headers: { "content-type": "text/html; charset=utf-8" },
   });
 }
