@@ -1,26 +1,28 @@
 :root {
- font: small-caps bold 1.2em/1 sans-serif;
-}
-
-label {
-  padding-right: 1em;
-}
-
-p {
-  text-align: center;
+  font: small-caps bold 1.2em/1 sans-serif;
+  --comment-padding: 0.5em;
 }
 
 video {
- width: 100%;
+  width: 100%;
 }
 
+textarea {
+  margin-top: 1em;
+  min-height: 5em;
+  width: 100%
+}
+
+
 #app {
+  max-width: 600px;
   margin: auto;
 }
 
 #week {
-  font-size: 1rem;
-  width: 1.5rem;
+  font-size: 1em;
+  width: 3em;
+  margin-left: 1em;
 }
 
 #schedule {
@@ -29,17 +31,13 @@ video {
   flex-wrap: wrap;
 }
 
-.cell {
-  background: #ddffff;
-  display: flex;
-  width: calc(50% - 1.6rem);
-  margin: 0.3rem;
-  padding: 0.5rem;
-  font-size: 1rem;
+#convo {
+  max-width: 600px;
+  margin: auto;
 }
 
-.schedule-move {
-  transition: transform 1s;
+.week-controls {
+  text-align: center;
 }
 
 .button {
@@ -52,4 +50,44 @@ video {
 .button:active {
   position: relative;
   top: 2px;
+}
+
+.schedule-move {
+  transition: transform 1s;
+}
+
+.cell {
+  background: #ddffff;
+  display: flex;
+  width: calc(50% - 1.6rem);
+  margin: 0.3rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+.comment {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.15em;
+  padding: var(--comment-padding);
+  border-width: 1px;
+  border-color: black;
+  border-style: solid;
+}
+
+.comment-time {
+  margin-top: calc(0px - var(--comment-padding));
+  font-size: small;
+  text-align: right;
+}
+
+.comment-text {
+  display: inline;
+}
+
+.comment-picture {
+  float: left; 
+  position: relative;
+  left: calc(0px - var(--comment-padding));
+  max-width: 25%;
 }

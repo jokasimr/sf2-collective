@@ -1,9 +1,42 @@
 import { h, Fragment } from "https://x.lcas.dev/preact@10.5.12/mod.js";
 import { renderToString } from "https://x.lcas.dev/preact@10.5.12/ssr.js";
 
-import { getWeek, randomCinderella } from "./utils.js";
+import { api, readMessages } from "./api.js";
+import { getWeek, randomCinderella, sanitize } from "./utils.js";
 
-function App() {
+
+
+async function conversation() {
+  return (`
+    <div id="convo">
+      <textarea id="input-message"></textarea>
+      <label for="picture">Image: </label>
+      <input id="input-picture" name="picture" type="text">
+      <input type="submit"
+        onclick="fetch('/api', {method: 'POST', body: JSON.stringify({message: document.getElementById('input-message').value, picture: document.getElementById('input-picture').value})}).then((res) => { if (res.status === 200) {window.location = window.location}; })"
+      >
+      ${(await readMessages())
+        .reverse()
+        .map(m =>
+          `<div class="comment">
+             <span class="comment-time">${(new Date(m.ms)).toLocaleString('sv')}</span>
+             <div class="comment-body">
+               <img class="comment-picture"
+                onclick="document.getElementById('input-picture').value = this.src"
+                src="${sanitize(m.picture)}">
+               <span class="comment-text">
+                 ${sanitize(m.message)}
+               </span>
+             </div>
+           </div>`
+        ).join('\n')
+      }
+    </div>
+  `);
+}
+
+
+async function app() {
   const cinderella = randomCinderella();
   return `
     <html>
@@ -14,7 +47,7 @@ function App() {
       </head>
       <body>
         <div id="app" style="display:none">
-          <p>
+          <p class="week-controls">
             <span class="button" @click="left">⬅️</span>
             <label for="week">Week</label>
             <input type="number" v-model.number="week" value=${getWeek()} id="week" name="week" min="1" max="52" />
@@ -30,12 +63,15 @@ function App() {
             <img src="${cinderella.png}" alt="cinderella cleaning">
           </video>
         </div>
+        ${await conversation()}
       </body>
-      <script async src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script> 
       <script async src="script.js"></script>
     </html>
   `;
 }
+
 
 addEventListener("fetch", (event) => {
   event.respondWith(handleRequest(event.request));
@@ -54,7 +90,11 @@ async function handleRequest(request) {
     return staticContent("application/javascript", await fetch(script));
   }
 
-  return new Response(App(), {
+  if (pathname.startsWith("/api")) {
+    return await api(request);
+  }
+
+  return new Response(await app(), {
     headers: { "content-type": "text/html; charset=utf-8" },
   });
 }

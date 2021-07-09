@@ -1,3 +1,4 @@
+import {XmlEntities} from "https://deno.land/x/html_entities@v1.0/mod.js";
 import {cinderellaImages} from './cinderella.js';
 
 export function getWeek() {
@@ -16,3 +17,8 @@ export function getWeek() {
 export function randomCinderella() {
     return cinderellaImages[Math.floor(Math.random() * cinderellaImages.length)];
 }
+
+
+export function sanitize(s) {
+    return XmlEntities.encodeNonUTF(s)
+};
