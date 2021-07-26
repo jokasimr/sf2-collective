@@ -1,9 +1,13 @@
 import { h, Fragment } from "https://x.lcas.dev/preact@10.5.12/mod.js";
 import { renderToString } from "https://x.lcas.dev/preact@10.5.12/ssr.js";
 
-import { getWeek, randomCinderella } from "./utils.js";
+import { api, readMessages } from "./api.js";
+import { retreive } from './db.js';
+import { getWeek, randomCinderella, sanitize } from "./utils.js";
 
-function App() {
+
+
+async function app() {
   const cinderella = randomCinderella();
   return `
     <html>
@@ -14,28 +18,21 @@ function App() {
       </head>
       <body>
         <div id="app" style="display:none">
-          <p>
-            <span class="button" @click="left">⬅️</span>
-            <label for="week">Week</label>
-            <input type="number" v-model.number="week" value=${getWeek()} id="week" name="week" min="1" max="52" />
-            <span class="button" @click="right">➡️</span>
-          </p>
-          <transition-group id="schedule" name="schedule" tag="div">
-              <div class="cell" v-for="item in tasksAndPeople" :key="item">
-                <span>{{ item }}</span>
-              </div>
-          </transition-group>
+          <tasks-list :week="${getWeek()}"></tasks-list>
           <video preload="none" poster="${cinderella.png}" muted loop>
             <source src="${cinderella.webm}">
             <img src="${cinderella.png}" alt="cinderella cleaning">
           </video>
+          <conversation></conversation>
         </div>
       </body>
-      <script async src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
-      <script async src="script.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script> 
+      <script type="module" src="script.js"></script>
     </html>
   `;
 }
+
 
 addEventListener("fetch", (event) => {
   event.respondWith(handleRequest(event.request));
@@ -54,7 +51,16 @@ async function handleRequest(request) {
     return staticContent("application/javascript", await fetch(script));
   }
 
-  return new Response(App(), {
+  if (pathname.startsWith("/colors.js")) {
+    const script = new URL("colors.js", import.meta.url);
+    return staticContent("application/javascript", await fetch(script));
+  }
+
+  if (pathname.startsWith("/api")) {
+    return await api(request);
+  }
+
+  return new Response(await app(), {
     headers: { "content-type": "text/html; charset=utf-8" },
   });
 }
