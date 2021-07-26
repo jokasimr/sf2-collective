@@ -12,6 +12,7 @@ Well.. yes.
 
 [Install `deployctl`](https://deno.com/deploy/docs/deployctl) 
 
+Ask Johannes for some secret environment variables.
  
 ### Run locally
 
