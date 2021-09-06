@@ -78,7 +78,7 @@ Vue.component('comment', {
            @click="$emit('comment-picture-click', picture)"
            :src="src"
            crossorigin="Anonymous">
-          <span class="comment-text">{{ message }}</span>
+          <p class="comment-text">{{ message }}</p>
         </div>
       </div>`,
     props: {

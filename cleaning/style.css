@@ -71,7 +71,6 @@ textarea {
   display: flex;
   flex-direction: column;
   margin-top: 0.15em;
-  padding: var(--comment-padding);
   border-width: 1px;
   border-color: black;
   border-style: solid;
@@ -79,20 +78,19 @@ textarea {
 
 .comment-time {
   float: right;
-  margin-top: calc(0px - var(--comment-padding));
   font-size: small;
   text-align: right;
+  margin: calc(var(--comment-padding) / 2);
 }
 
 .comment-text {
   white-space: pre-wrap;
+  margin: var(--comment-padding);
 }
 
 .comment-picture {
   float: left; 
   position: relative;
-  left: calc(0px - var(--comment-padding));
-  top: calc(0px - var(--comment-padding));
   max-width: 25%;
-  margin-bottom: calc(-2 * var(--comment-padding));
+  margin-right: var(--comment-padding);
 }
