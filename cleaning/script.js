@@ -28,12 +28,13 @@ Vue.component('tasks-list', {
   data: function () {
     return {
       startTasks: ["Toalett/sopor", "Köket", "Hall", "Vardagsrum", "Tvättstuga", "Badrum"],
-      people: ["Johannes", "Lorenzo", "Saranna", "Alex", "Sebastian", "Ellen"],
+      people: ["Johannes", "Samuel", "Saranna", "Alex", "Sebastian", "Ellen"],
+      year: new Date().getFullYear() 
     }
   },
   computed: {
     tasks: function () {
-      const yearDiff = (new Date().getFullYear() - 2021) * 52;
+      const yearDiff = (this.year - 2021) * 52;
       const a = this.startTasks.map(t => t);
       repeat(this.week + yearDiff)(() => rotateLeft(a));
       return a;
@@ -49,16 +50,20 @@ Vue.component('tasks-list', {
   },
   methods: {
     left: function () {
-      if (this.week === 1)
+      if (this.week === 1) {
         this.week = 52;
-      else
-        this.week = this.week -= 1;
+        this.year -= 1;
+      } else {
+        this.week -= 1;
+      }
     },
     right: function () {
-      if (this.week === 52)
+      if (this.week === 52) {
         this.week = 1;
-      else
-        this.week = this.week += 1;
+        this.year += 1;
+      } else {
+        this.week += 1;
+      }
     }
   }
 });
@@ -73,7 +78,7 @@ Vue.component('comment', {
            @click="$emit('comment-picture-click', picture)"
            :src="src"
            crossorigin="Anonymous">
-          <span class="comment-text">{{ message }}</span>
+          <p class="comment-text">{{ message }}</p>
         </div>
       </div>`,
     props: {
