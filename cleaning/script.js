@@ -27,8 +27,8 @@ Vue.component('tasks-list', {
   props: {week: Number},
   data: function () {
     return {
-      startTasks: ["Toalett/sopor", "Köket", "Hall", "Vardagsrum", "Tvättstuga", "Badrum"],
-      people: ["Johannes", "Samuel", "Saranna", "Alex", "Sebastian", "Ellen"],
+      startTasks: ["Sopor / Återvinning", "Köket", "Hallar + Tvättstuga", "Vardagsrum", "Toalett + badrum"],
+      people: ["Josefin", "Johannes", "Samuel", "Saranna", "Alex"],
       year: new Date().getFullYear() 
     }
   },
