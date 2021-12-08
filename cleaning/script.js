@@ -27,8 +27,8 @@ Vue.component('tasks-list', {
   props: {week: Number},
   data: function () {
     return {
-      startTasks: ["Toalett/sopor", "Köket", "Hall", "Vardagsrum", "Tvättstuga", "Badrum"],
-      people: ["Johannes", "Samuel", "Saranna", "Alex", "Sebastian", "Ellen"],
+      startTasks: ["Sopor / Återvinning", "Köket", "Hallar + Tvättstuga", "Vardagsrum", "Toalett + badrum"],
+      people: ["Josefin", "Johannes", "Samuel", "Saranna", "Alex"],
       year: new Date().getFullYear() 
     }
   },
@@ -187,13 +187,15 @@ Vue.component('conversation', {
         setTimeout(() => this.error = null, 8000);
         return;
       }
+
+      const message = this.text;
+      const picture = this.picture;
+      this.text = '';
+      this.picture = '';
       
       const res = await fetch('/api', {
         method: 'POST',
-        body: JSON.stringify({
-          message: this.text,
-          picture: this.picture
-        })
+        body: JSON.stringify({message, picture})
       });
       
       if (res.status === 200)

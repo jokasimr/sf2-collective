@@ -36,7 +36,7 @@ export async function add(message) {
 
 export async function retreive() {
     const headers = {
-            "X-Master-Key": JSONBIN_MASTER_KEY
+        "X-Master-Key": JSONBIN_MASTER_KEY
     };
     const bins = await fetch(listUrl, {headers})
         .then(r => r.json());
