@@ -1,5 +1,5 @@
 import {sanitize} from './utils.js';
-import {add, retreive} from './db.js';
+import {add, retreive, remove} from './db.js';
 
 const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
 
@@ -18,6 +18,15 @@ export async function api(request) {
     const messages = await retreive();
     return new Response(JSON.stringify(messages), {
       headers: { "content-type": "application/json; charset=utf-8" },
+    });
+  }
+
+  if (request.method === 'DELETE') {
+    const id = request.url.split('/').pop();
+    await remove(id);
+    
+    return new Response('ok', {
+      headers: { "content-type": "text/plain; charset=utf-8" },
     });
   }
 

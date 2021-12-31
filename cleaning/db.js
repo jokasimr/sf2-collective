@@ -5,6 +5,7 @@ const JSONBIN_URL = "https://api.jsonbin.io/v3";
 
 const readUrl = (id) => `${JSONBIN_URL}/b/${id}`;
 const addUrl = `${JSONBIN_URL}/b/`;
+const removeUrl = (id) => `${JSONBIN_URL}/b/${id}`;
 const listUrl = `${JSONBIN_URL}/c/${JSONBIN_COLLECTION}/bins`;
 
 
@@ -43,7 +44,14 @@ export async function retreive() {
     return Promise.all(
         bins.map(async b => {
             const m = await read(b.record);
-            return {...m, ts: b.createdAt};
+            return {...m, ts: b.createdAt, id: b.record};
         })
     );
+}
+
+export async function remove(id) {
+    const headers = {
+        "X-Master-Key": JSONBIN_MASTER_KEY
+    };
+    await fetch(removeUrl(id), {headers, method: "DELETE"});
 }
