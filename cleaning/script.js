@@ -73,19 +73,30 @@ Vue.component('comment', {
     template: `
       <div class="comment" ref="comment">
         <div class="comment-body">
-          <span class="comment-time">{{ time }}</span>
+          <span class="comment-time"
+            @click="showRemoveButton = !showRemoveButton"
+          >{{ time }}</span>
+          <span class="comment-time"
+            style="margin-right: 1em"
+            v-if="showRemoveButton"
+            @click="$emit('remove')"
+          >X</span>
           <img class="comment-picture" ref="picture"
            @click="$emit('comment-picture-click', picture)"
            :src="src"
            crossorigin="Anonymous">
-          <p class="comment-text">{{ message }}</p>
+          <p class="comment-text"
+          >{{ message }}</p>
         </div>
       </div>`,
     props: {
         message: String,
         picture: String,
-        ts: String
+        ts: String,
     },
+    data: function() { return ({
+        showRemoveButton: false,
+    })},
     mounted: function() {
         const sample = () => Math.floor(255*Math.random());
         const img = this.$refs.picture;
@@ -116,33 +127,33 @@ Vue.component('comment', {
             return googleProxyURL + encodeURIComponent(this.picture);
         },
         pictureBoundaryColor: function() {
-        const img = this.$refs.picture;
-        const comment = this.$refs.comment;
+            const img = this.$refs.picture;
+            const comment = this.$refs.comment;
 
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext && canvas.getContext('2d');
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext && canvas.getContext('2d');
 
-        const height = canvas.height = img.naturalHeight || img.offsetHeight || img.height;
-        const width = canvas.width = img.naturalWidth || img.offsetWidth || img.width; 
+            const height = canvas.height = img.naturalHeight || img.offsetHeight || img.height;
+            const width = canvas.width = img.naturalWidth || img.offsetWidth || img.width; 
 
-        context.drawImage(img, 0, 0, width, height);
+            context.drawImage(img, 0, 0, width, height);
 
-        const border = [
-           // right
-           ...context.getImageData(width-1, 0, 1, height).data
-        ];
+            const border = [
+               // right
+               ...context.getImageData(width-1, 0, 1, height).data
+            ];
 
-        if (img.offsetHeight < comment.clientHeight) {
-            // bottom
-            border.push(...context.getImageData(0, height - 1, width, 1).data);
-        }
+            if (img.offsetHeight < comment.clientHeight) {
+                // bottom
+                border.push(...context.getImageData(0, height - 1, width, 1).data);
+            }
 
-        const r = border.filter((_,i) => i % 4 == 0);  
-        const g = border.filter((_,i) => i % 4 == 1);
-        const b = border.filter((_,i) => i % 4 == 2);
+            const r = border.filter((_,i) => i % 4 == 0);  
+            const g = border.filter((_,i) => i % 4 == 1);
+            const b = border.filter((_,i) => i % 4 == 2);
 
-        return colorClosestToMedian(r, g, b);
-    },
+            return colorClosestToMedian(r, g, b);
+        },
     }
 });
     
@@ -160,6 +171,7 @@ Vue.component('conversation', {
           :message="message.message"
           :picture="message.picture"
           :ts="message.ts"
+          @remove="remove(message.id)"
           @comment-picture-click="picture = $event">
       </comment>
     </div>
@@ -200,6 +212,10 @@ Vue.component('conversation', {
       
       if (res.status === 200)
         await this.load();
+    },
+    remove: async function(id) {
+      await fetch(`/api/${id}`, {method: 'DELETE'});
+      await this.load();
     }
   }
 });
