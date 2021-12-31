@@ -95,3 +95,15 @@ textarea {
   max-width: 25%;
   margin-right: var(--comment-padding);
 }
+
+.comment-remove {
+  margin-left: var(--comment-padding);
+  border-style: solid;
+  user-select: none;
+  cursor: pointer;
+}
+
+.comment-remove:active {
+  position: relative;
+  top: 2px;
+}

@@ -73,14 +73,13 @@ Vue.component('comment', {
     template: `
       <div class="comment" ref="comment">
         <div class="comment-body">
-          <span class="comment-time"
-            @click="showRemoveButton = !showRemoveButton"
-          >{{ time }}</span>
-          <span class="comment-time"
-            style="margin-right: 1em"
+          <span class="comment-time comment-remove"
             v-if="showRemoveButton"
             @click="$emit('remove')"
           >X</span>
+          <span class="comment-time"
+            @click="showRemoveButton = !showRemoveButton"
+          >{{ time }}</span>
           <img class="comment-picture" ref="picture"
            @click="$emit('comment-picture-click', picture)"
            :src="src"
