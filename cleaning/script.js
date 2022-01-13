@@ -28,7 +28,7 @@ Vue.component('tasks-list', {
   data: function () {
     return {
       startTasks: ["Sopor / Återvinning", "Köket", "Hallar + Tvättstuga", "Vardagsrum", "Toalett + badrum"],
-      people: ["Josefin", "Johannes", "Samuel", "Saranna", "Alex"],
+      people: ["Josefin", "Johannes", "Samuel", "Saranna", "Ambre"],
       year: new Date().getFullYear() 
     }
   },
