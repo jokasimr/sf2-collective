@@ -9,13 +9,29 @@ const removeUrl = (id) => `${JSONBIN_URL}/b/${id}`;
 const listUrl = `${JSONBIN_URL}/c/${JSONBIN_COLLECTION}/bins`;
 
 
+async function throttleMap(f, c, n) {
+    const result = [];
+    let i = 0;
+
+    while (i < c.length) {
+        result.push(
+            ...(await Promise.all(c.slice(i, i + n).map(f)))
+        );
+        i += n;
+    }
+    result.push(
+        ...(await Promise.all(c.slice(i, c.length).map(f)))
+    );
+    return result;
+}
+
 async function read(id) {
     const headers = {
         "X-Master-Key": JSONBIN_MASTER_KEY,
         "X-Bin-Meta": "false",
     };
-    return (await fetch(readUrl(id), {headers}))
-        .json();
+    const response = await fetch(readUrl(id), {headers});
+    return await response.json();
 }
 
 
@@ -41,11 +57,12 @@ export async function retreive() {
     };
     const bins = await fetch(listUrl, {headers})
         .then(r => r.json());
-    return Promise.all(
-        bins.map(async b => {
+    return throttleMap(
+        async b => {
             const m = await read(b.record);
             return {...m, ts: b.createdAt, id: b.record};
-        })
+        },
+        bins, 5
     );
 }
 
